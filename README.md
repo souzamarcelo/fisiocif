@@ -5,7 +5,8 @@
 Esta obra está disponível sob uma Licença <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Atribuição-NãoComercial-SemDerivações 4.0 Internacional</a>.
 
 + Analice Branco<sup>1</sup>
-+ Contato: 
++ Contato: ana.branco.lice@gmail.com
++ Universidade Estadual do Centro-Oeste, Unicentro, Paraná
 
 **Conteúdo:**
 + [Conjunto de dados](data/);
@@ -15,5 +16,3 @@ Esta obra está disponível sob uma Licença <a rel="license" href="http://creat
 Para executar o lab book:
 
 [![Binder](https://notebooks.gesis.org/binder/badge_logo.svg)](https://notebooks.gesis.org/binder/v2/gh/souzamarcelo/fisiocif/master)
-
-<sup>1</sup> Universidade Estadual do Centro-Oeste, Unicentro, Paraná
