@@ -4,7 +4,7 @@
 
 Esta obra está disponível sob uma Licença <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Atribuição-NãoComercial-SemDerivações 4.0 Internacional</a>.
 
-+ Analice Branco<sup>1</sup>
++ Analice Branco
 + Contato: ana.branco.lice@gmail.com
 + Universidade Estadual do Centro-Oeste, Unicentro, Paraná
 
