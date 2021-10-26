@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -21,8 +22,26 @@ def read_data():
     data['preparado'] = data['preparado'].map(lambda x: 'N' if 'Não' in x else 'S')
     data['como_conheceu'] = data['como_conheceu'].map(lambda x: 'faculdade' if 'faculdade' in x else 'N' if 'Não' in x else 'eventos' if 'eventos' in x else 'X')
     data['idade'] = data['idade'].map(lambda x: x.replace(' anos', ''))
+    data['instituicao'] = data['instituicao'].map(lambda x: 'publica' if x == 'UNICENTRO' else 'privada')
     return data
 
-#data = read_data()
-#print(data.head())
-#exit()
+def plot_institution(data):
+    total_publica = data[data['instituicao'] == 'publica']['instituicao'].count()
+    total_privada = data[data['instituicao'] == 'privada']['instituicao'].count()
+    data['conhece_s'] = data['conhece'].map(lambda x: 1 if x == 'S' else 0)
+    data['conhece_n'] = data['conhece'].map(lambda x: 1 if x == 'N' else 0)
+    data['usa_s'] = data['usa'].map(lambda x: 1 if x == 'S' else 0)
+    data['usa_n'] = data['usa'].map(lambda x: 1 if x == 'N' else 0)
+    data = data.groupby('instituicao', as_index = False).agg({'conhece_s': 'sum', 'conhece_n': 'sum', 'usa_s': 'sum', 'usa_n': 'sum'})
+    data.loc[data['instituicao'] == 'publica', 'conhece_s'] = data[data['instituicao'] == 'publica']['conhece_s'].map(lambda x: 100 * x / total_publica)
+    data.loc[data['instituicao'] == 'publica', 'conhece_n'] = data[data['instituicao'] == 'publica']['conhece_n'].map(lambda x: 100 * x / total_publica)
+    data.loc[data['instituicao'] == 'privada', 'conhece_s'] = data[data['instituicao'] == 'privada']['conhece_s'].map(lambda x: 100 * x / total_privada)
+    data.loc[data['instituicao'] == 'privada', 'conhece_n'] = data[data['instituicao'] == 'privada']['conhece_n'].map(lambda x: 100 * x / total_privada)
+    
+    plt.bar(data['instituicao'], data['conhece_s'])
+    plt.bar(data['instituicao'], data['conhece_n'])
+    plt.show()
+
+data = read_data()
+plot_institution(data)
+exit()
