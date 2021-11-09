@@ -17,7 +17,7 @@ def read_data_students():
     data['treinamento'] = data['treinamento'].map(lambda x: 'S' if x == 'SIM' else 'N')
     data['conhece_cif_cj'] = data['conhece_cif_cj'].map(lambda x: 'S' if x == 'SIM' else 'N')
     data['conhece_core_sets'] = data['conhece_core_sets'].map(lambda x: 'S' if x == 'SIM' else 'N')
-    data['considera_importance'] = data['considera_importance'].map(lambda x: 'S' if x == 'SIM' else 'N')
+    data['considera_importante'] = data['considera_importante'].map(lambda x: 'S' if x == 'SIM' else 'N')
     data['entende_importancia'] = data['entende_importancia'].map(lambda x: 'S' if x == 'SIM' else 'N')
     data['preparado'] = data['preparado'].map(lambda x: 'N' if 'Não' in x else 'S')
     data['como_conheceu'] = data['como_conheceu'].map(lambda x: 'faculdade' if 'faculdade' in x else 'N' if 'Não' in x else 'eventos' if 'eventos' in x else 'X')
@@ -25,47 +25,38 @@ def read_data_students():
     data['instituicao'] = data['instituicao'].map(lambda x: 'publica' if x == 'UNICENTRO' else 'privada')
     return data
 
-def table_sample_students(data):
+def aggregate_sample(data, col):
     total = len(data)
     table = data.copy()
     table['n'] = 1
     table['percentual'] = 1
-    table_idade = table.groupby(['idade'], as_index = False).agg({'n': 'count', 'percentual': 'count'})
-    table_idade['percentual'] = table_idade['percentual'].map(lambda x: round(100 * x / total, 1))
-    table_idade['variavel'] = 'idade'
-    table_idade['valores'] = table_idade['idade']
-    table_idade = table_idade[['variavel', 'valores', 'n', 'percentual']]
-    table_sexo = table.groupby(['sexo'], as_index = False).agg({'n': 'count', 'percentual': 'count'})
-    table_sexo['percentual'] = table_sexo['percentual'].map(lambda x: round(100 * x / total, 1))
-    table_sexo['variavel'] = 'sexo'
-    table_sexo['valores'] = table_sexo['sexo']
-    table_sexo = table_sexo[['variavel', 'valores', 'n', 'percentual']]
-    table_periodo = table.groupby(['periodo'], as_index = False).agg({'n': 'count', 'percentual': 'count'})
-    table_periodo['percentual'] = table_periodo['percentual'].map(lambda x: round(100 * x / total, 1))
-    table_periodo['variavel'] = 'periodo'
-    table_periodo['valores'] = table_periodo['periodo']
-    table_periodo = table_periodo[['variavel', 'valores', 'n', 'percentual']]
+    table = table.groupby([col], as_index = False).agg({'n': 'count', 'percentual': 'count'})
+    table['percentual'] = table['percentual'].map(lambda x: round(100 * x / total, 1))
+    table['variavel'] = col
+    table['valores'] = table[col]
+    table = table[['variavel', 'valores', 'n', 'percentual']]
+    return table
+
+def table_sample_students(data):
+    table_idade = aggregate_sample(data, 'idade')
+    table_sexo = aggregate_sample(data, 'sexo')
+    table_periodo = aggregate_sample(data, 'periodo')
     table = pd.concat([table_idade, table_sexo, table_periodo])
     return table
 
-# def table_sample_students(data):
-#     total = len(data)
-#     table = data.copy()
-#     table['n'] = 1
-#     table['percentual'] = 1
-#     table_idade = table.groupby(['idade'], as_index = False).agg({'n': 'count', 'percentual': 'count'})
-#     table_idade['percentual'] = table_idade['percentual'].map(lambda x: round(100 * x / total, 1))
-#     table_sexo = table.groupby(['sexo'], as_index = False).agg({'n': 'count', 'percentual': 'count'})
-#     table_sexo['percentual'] = table_sexo['percentual'].map(lambda x: round(100 * x / total, 1))
-#     table_periodo = table.groupby(['periodo'], as_index = False).agg({'n': 'count', 'percentual': 'count'})
-#     table_periodo['percentual'] = table_periodo['percentual'].map(lambda x: round(100 * x / total, 1))
-#     return table_idade, table_sexo, table_periodo
-
 def table_sample_cif_students(data):
-    total = len(data)
-    table = data.copy()
-    table['n'] = 1
-    table['percentual'] = 1
+    tables = []
+    tables.append(aggregate_sample(data, 'conhece'))
+    tables.append(aggregate_sample(data, 'conhece_cif_cj'))
+    tables.append(aggregate_sample(data, 'conhece_core_sets'))
+    tables.append(aggregate_sample(data, 'usa'))
+    tables.append(aggregate_sample(data, 'motivo_nao_usa'))
+    tables.append(aggregate_sample(data, 'treinamento'))
+    tables.append(aggregate_sample(data, 'conhecimento'))
+    tables.append(aggregate_sample(data, 'considera_importante'))
+    tables.append(aggregate_sample(data, 'entende_importancia'))
+    table = pd.concat(tables)
+    return table
 
 # def plot_institution(data):
 #     total_publica = data[data['instituicao'] == 'publica']['instituicao'].count()
@@ -85,6 +76,7 @@ def table_sample_cif_students(data):
 #     plt.show()
 
 #data = read_data_students()
-#table_sample_cif_students(data)
+#x = table_sample_cif_students(data)
+#print(x)
 #table_sample_students(data)
 #exit()
