@@ -107,6 +107,35 @@ def table_sample_cif_students(data):
     table = pd.concat(tables)
     return table
 
+def table_core_sets(data):
+    table = data.copy()
+    table = table[['conhece_core_sets', 'preparado', 'conhece', 'usa']]
+    table['preparado_s'] = table['preparado'].map(lambda x: 1 if x == 'S' else 0)
+    table['preparado_n'] = table['preparado'].map(lambda x: 0 if x == 'S' else 1)
+    table = table.groupby('conhece_core_sets', as_index = False).agg({'preparado_s': 'sum', 'preparado_n': 'sum'})
+    return table
+
+def table_knowledge_professionals(data):
+    table = data.copy()
+    table = table[['conhecimento', 'instituicao', 'instrucao']]
+    table['privada'] = table['instituicao'].map(lambda x: 1 if x == 'privada' else 0)
+    table['publica'] = table['instituicao'].map(lambda x: 1 if x == 'publica' else 0)
+    table['especializacao'] = table['instrucao'].map(lambda x: 1 if x == 'Especialização' else 0)
+    table['mestrado'] = table['instrucao'].map(lambda x: 1 if x == 'Mestrado' else 0)
+    table['doutorado'] = table['instrucao'].map(lambda x: 1 if x == 'Doutorado' else 0)
+    table = table.groupby('conhecimento', as_index = False).agg({'publica': 'sum', 'privada': 'sum', 'especializacao': 'sum', 'mestrado': 'sum', 'doutorado': 'sum'})
+    return table
+
+def table_use(data):
+    table = data.copy()
+    table = table[['conhece_core_sets', 'usa', 'preparado']]
+    table['usa_s'] = table['usa'].map(lambda x: 1 if x == 'S' else 0)
+    table['usa_n'] = table['usa'].map(lambda x: 1 if x == 'N' else 0)
+    table['preparado_s'] = table['preparado'].map(lambda x: 1 if x == 'S' else 0)
+    table['preparado_n'] = table['preparado'].map(lambda x: 1 if x == 'N' else 0)
+    table = table.groupby('conhece_core_sets', as_index = False).agg({'usa_s': 'sum', 'usa_n': 'sum', 'preparado_s': 'sum', 'preparado_n': 'sum'})
+    return table
+
 def plot_institution(data):
     data['conhece_s'] = data['conhece'].map(lambda x: 1 if x == 'S' else 0)
     data['conhece_n'] = data['conhece'].map(lambda x: 1 if x == 'N' else 0)
@@ -306,5 +335,8 @@ def plot_reason(data):
     return plt
 
 #data = read_data_students()
+#table_core_sets(data)
 #data = read_data_professionals()
+#table_use(data)
+#table_knowledge_professionals(data)
 #print(table_sample_cif_professionals(data))
