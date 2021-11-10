@@ -25,6 +25,28 @@ def read_data_students():
     data['instituicao'] = data['instituicao'].map(lambda x: 'publica' if x == 'UNICENTRO' else 'privada')
     return data
 
+def read_data_professionals():
+    data = pd.read_csv('./data/profissionais.csv', sep = ',')
+    cols = list(data.columns)
+    cols.remove('data_hora')
+    cols.remove('declaracao')
+    cols.remove('nome')
+    cols.remove('video_ajudou')
+    data = data[cols]
+    data['sexo'] = data['sexo'].map(lambda x: 'F' if x == 'Femino' else 'M')
+    data['conhece'] = data['conhece'].map(lambda x: 'S' if x == 'SIM' else 'N')
+    data['usa'] = data['usa'].map(lambda x: 'S' if x == 'SIM' else 'N')
+    data['treinamento'] = data['treinamento'].map(lambda x: 'S' if x == 'SIM' else 'N')
+    data['conhece_cif_cj'] = data['conhece_cif_cj'].map(lambda x: 'S' if x == 'SIM' else 'N')
+    data['conhece_core_sets'] = data['conhece_core_sets'].map(lambda x: 'S' if x == 'SIM' else 'N')
+    data['considera_importante'] = data['considera_importante'].map(lambda x: 'S' if x == 'SIM' else 'N')
+    data['entende_importancia'] = data['entende_importancia'].map(lambda x: 'S' if x == 'SIM' else 'N')
+    data['preparado'] = data['preparado'].map(lambda x: 'N' if 'Não' in x else 'S')
+    data['idade'] = data['idade'].map(lambda x: x.replace(' anos', ''))
+    data['tempo_formado'] = data['tempo_formado'].map(lambda x: x.replace(' anos', '').replace('Entre ', '').replace('entre ', ''))
+    data['instituicao'] = data['instituicao'].map(lambda x: 'publica' if x == 'Pública' else 'privada')
+    return data
+
 def aggregate_sample(data, col):
     total = len(data)
     table = data.copy()
@@ -37,11 +59,38 @@ def aggregate_sample(data, col):
     table = table[['variavel', 'valores', 'n', 'percentual']]
     return table
 
+def table_sample_professionals(data):
+    tables = []
+    tables.append(aggregate_sample(data, 'idade'))
+    tables.append(aggregate_sample(data, 'sexo'))
+    tables.append(aggregate_sample(data, 'tempo_formado'))
+    tables.append(aggregate_sample(data, 'instituicao'))
+    tables.append(aggregate_sample(data, 'especialidade'))
+    tables.append(aggregate_sample(data, 'instrucao'))
+    tables.append(aggregate_sample(data, 'local_trabalho'))
+    table = pd.concat(tables)
+    return table
+
 def table_sample_students(data):
     table_idade = aggregate_sample(data, 'idade')
     table_sexo = aggregate_sample(data, 'sexo')
     table_periodo = aggregate_sample(data, 'periodo')
     table = pd.concat([table_idade, table_sexo, table_periodo])
+    return table
+
+def table_sample_cif_professionals(data):
+    tables = []
+    tables.append(aggregate_sample(data, 'conhece'))
+    tables.append(aggregate_sample(data, 'conhece_cif_cj'))
+    tables.append(aggregate_sample(data, 'conhece_core_sets'))
+    tables.append(aggregate_sample(data, 'usa'))
+    tables.append(aggregate_sample(data, 'motivo_nao_usa'))
+    tables.append(aggregate_sample(data, 'treinamento'))
+    tables.append(aggregate_sample(data, 'conhecimento'))
+    tables.append(aggregate_sample(data, 'considera_importante'))
+    tables.append(aggregate_sample(data, 'entende_importancia'))
+    tables.append(aggregate_sample(data, 'preparado'))
+    table = pd.concat(tables)
     return table
 
 def table_sample_cif_students(data):
@@ -168,8 +217,6 @@ def plot_year(data):
 
     ax = fig.add_subplot(1, 3, 2)
     ax.set_ylim(0, max_lim)
-    #ax.yaxis.tick_right()
-    #ax.yaxis.set_label_position('right')
     ax.bar(labels, sim_4, width, label = 'Sim')
     ax.bar(labels, nao_4, width, bottom = sim_4, label = 'Não')
     ax.get_yaxis().set_visible(False)
@@ -259,4 +306,5 @@ def plot_reason(data):
     return plt
 
 #data = read_data_students()
-#plot_year(data)
+#data = read_data_professionals()
+#print(table_sample_cif_professionals(data))
